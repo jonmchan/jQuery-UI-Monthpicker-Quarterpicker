@@ -219,7 +219,7 @@
       switch(lastDayOption) {
         case "primary":
             val = val.split('/');
-            inst.currentDay=val[1];
+            inst.currentDay=parseInt(val[1]);
             inst.currentMonth=val[0]-1;
             inst.currentYear=val[2];
             this._selectDate("#"+inst.id,this._formatDate(inst,inst.currentDay,inst.currentMonth,inst.currentYear));
@@ -229,7 +229,7 @@
             break;
         case "alternate":
             lastdayval = lastdayval.split('/');
-            inst.currentDay=lastdayval[1];
+            inst.currentDay=parseInt(lastdayval[1]);
             inst.currentMonth=lastdayval[0]-1;
             inst.currentYear=lastdayval[2];
             this._selectDate("#"+inst.id,this._formatDate(inst,inst.currentDay,inst.currentMonth,inst.currentYear));
@@ -243,11 +243,15 @@
             val=lastdayval;
         default:
             val = val.split('/');
-            inst.currentDay=val[1];
+            inst.currentDay=parseInt(val[1]);
             inst.currentMonth=val[0]-1;
             inst.currentYear=val[2];
             this._selectDate("#"+inst.id,this._formatDate(inst,inst.currentDay,inst.currentMonth,inst.currentYear));
       }
+
+      inst.selectedMonth=inst.currentMonth;
+      inst.selectedDay=inst.currentDay;
+      inst.selectedYear=inst.currentYear;
       
       if (eventSelect)
         eventSelect.apply(inst.input, [val, inst]);
@@ -275,8 +279,10 @@
           minDate = obj._getMinMaxDate(inst, 'min'),
           maxDate = obj._getMinMaxDate(inst, 'max'),
           selected = inst.input.val(),
-          current = selected == '' ? false : new Date(selected),
+          current = selected == '' ? false : new Date(inst.currentYear,inst.currentMonth,inst.currentDay),
           jMonth = obj._getFormatConfig(inst);
+      var currentDate = this._daylightSavingAdjust((!inst.currentDay ? new Date(9999, 9, 9) :
+          new Date(inst.currentYear, inst.currentMonth, inst.currentDay)));
       
       if(!inst.mqYear) {
         inst.mqYear = inst.drawYear;
@@ -380,7 +386,7 @@
       switch(lastDayOption) {
         case "primary":
             val = val.split('/');
-            inst.currentDay=val[1];
+            inst.currentDay=parseInt(val[1]);
             inst.currentMonth=val[0]-1;
             inst.currentYear=val[2];
             this._selectDate("#"+inst.id,this._formatDate(inst,inst.currentDay,inst.currentMonth,inst.currentYear));
@@ -388,7 +394,7 @@
             break;
         case "alternate":
             lastdayval = lastdayval.split('/');
-            inst.currentDay=lastdayval[1];
+            inst.currentDay=parseInt(lastdayval[1]);
             inst.currentMonth=lastdayval[0]-1;
             inst.currentYear=lastdayval[2];
             this._selectDate("#"+inst.id,this._formatDate(inst,inst.currentDay,inst.currentMonth,inst.currentYear));
@@ -399,12 +405,18 @@
             val=lastdayval;
         default:
             val = val.split('/');
-            inst.currentDay=val[1];
+            inst.currentDay=parseInt(val[1]);
             inst.currentMonth=val[0]-1;
             inst.currentYear=val[2];
             this._selectDate("#"+inst.id,this._formatDate(inst,inst.currentDay,inst.currentMonth,inst.currentYear));
             
       }
+
+      inst.selectedMonth=inst.currentMonth;
+      inst.selectedDay=inst.currentDay;
+      inst.selectedYear=inst.currentYear;
+
+      inst.lastVal=inst.input.val();
       
       
       if (eventSelect)
@@ -421,13 +433,23 @@
     _originalUpdateDatepicker: $.datepicker._updateDatepicker,
     _originalSelectDay: $.datepicker._selectDay,
     _originalCanAdjustMonth: $.datepicker._canAdjustMonth,
-    _originalAdjustDate: $.datepicker._adjustDate
+    _originalAdjustDate: $.datepicker._adjustDate,
+    _originalSetDateFromField: $.datepicker._setDateFromField
   });
 
   /**
   * @description set condition to decide whether replace original function
   */
   $.extend($.datepicker, {
+    _setDateFromField: function(inst, noDefault) {
+      if(this._get(inst,'monthpicker') || this._get(inst,'quarterpicker') ) {
+        if (typeof inst.currentDay === 'undefined') {
+          $.datepicker._originalSetDateFromField(inst,noDefault);
+        }
+      } else {
+        $.datepicker._originalSetDateFromField(inst,noDefault);
+      }
+    },
     _updateDatepicker: function(inst) {
       var self = this;
       var abc = new Date().getTime();
