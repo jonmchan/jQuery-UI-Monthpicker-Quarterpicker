@@ -136,7 +136,7 @@
           minDate = obj._getMinMaxDate(inst, 'min'),
           maxDate = obj._getMinMaxDate(inst, 'max'),
           selected = inst.input.val(),
-          current = selected == '' ? false : new Date(selected),
+          current = selected == '' ? false : new Date(inst.currentYear,inst.currentMonth,inst.currentDay),
           quarterName = ['Q1', 'Q2', 'Q3', 'Q4'];
       
       if(minDate) {
@@ -434,7 +434,8 @@
     _originalSelectDay: $.datepicker._selectDay,
     _originalCanAdjustMonth: $.datepicker._canAdjustMonth,
     _originalAdjustDate: $.datepicker._adjustDate,
-    _originalSetDateFromField: $.datepicker._setDateFromField
+    _originalSetDateFromField: $.datepicker._setDateFromField,
+    _originalFormatDate: $.datepicker.formatDate
   });
 
   /**
@@ -448,6 +449,13 @@
         }
       } else {
         $.datepicker._originalSetDateFromField(inst,noDefault);
+      }
+    },
+    formatDate: function(format,date,settings) {
+      if (format == 'quarter') {
+        return "Q" + (Math.floor((date.getMonth()+1)/3)+1) + " " + date.getFullYear();
+      } else {
+        return $.datepicker._originalFormatDate(format,date,settings);
       }
     },
     _updateDatepicker: function(inst) {

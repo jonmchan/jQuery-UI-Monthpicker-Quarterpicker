@@ -158,17 +158,20 @@
       });
     </script>
 
-    <h3>Quarter Picker with primary field last day, altfield regular</h3>
+    <h3>Quarter Picker with primary field last day, altfield regular, format 'quarter'</h3>
     <div id="quarter">
       <input type="text" id="quarterpicker5" />
       <input type="text" id="quarterpicker6" />
       <input type="text" id="altquarterpicker3" />
       <input type="text" id="altquarterpicker4" />
+      <button type="button" id="setQuarter">Set Quarter</button>
     </div>
     
     <script>
       $(function() {
         $("#quarterpicker5").datepicker({
+	  altFormat:"mm/dd/yy",
+          dateFormat: "quarter",
           altField:"#altquarterpicker3",
           quarterpicker: true
         });
@@ -176,6 +179,9 @@
           altField:"#altquarterpicker4",
           quarterpicker: true,
           lastDay: "primary"
+        });
+        $("#setQuarter").click(function() {
+          $("#quarterpicker5").datepicker('setDate',new Date(2011,3,1));
         });
       });
     </script>
