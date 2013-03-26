@@ -435,13 +435,22 @@
     _originalCanAdjustMonth: $.datepicker._canAdjustMonth,
     _originalAdjustDate: $.datepicker._adjustDate,
     _originalSetDateFromField: $.datepicker._setDateFromField,
-    _originalFormatDate: $.datepicker.formatDate
+    _originalFormatDate: $.datepicker.formatDate,
+    _originalNotifyChange: $.datepicker._notifyChange
   });
 
   /**
   * @description set condition to decide whether replace original function
   */
   $.extend($.datepicker, {
+    _notifyChange: function(inst) {
+      if(this._get(inst,'monthpicker') || this._get(inst,'quarterpicker') ) {
+        inst.mqYear=inst.drawYear;
+        $.datepicker._updateDatepicker(inst);
+      }
+      $.datepicker._originalNotifyChange(inst);
+    },
+
     _setDateFromField: function(inst, noDefault) {
       if(this._get(inst,'monthpicker') || this._get(inst,'quarterpicker') ) {
         if (typeof inst.currentDay === 'undefined') {
