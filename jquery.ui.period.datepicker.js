@@ -453,7 +453,7 @@
     },
     formatDate: function(format,date,settings) {
       if (format == 'quarter') {
-        return "Q" + (Math.floor((date.getMonth()+1)/3)+1) + " " + date.getFullYear();
+        return "Q" + (Math.floor((date.getMonth())/3)+1) + " " + date.getFullYear();
       } else {
         return $.datepicker._originalFormatDate(format,date,settings);
       }
